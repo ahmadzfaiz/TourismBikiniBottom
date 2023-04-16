@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
 
-// MUI
+// MUI Imports
 import {AppBar, Toolbar, Typography, Button} from '@mui/material';
 
 // Assets

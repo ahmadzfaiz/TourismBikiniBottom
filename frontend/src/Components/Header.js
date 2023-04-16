@@ -1,7 +1,7 @@
 import React from 'react'
 import {useNavigate} from 'react-router-dom'
 
-// MUI
+// MUI Imports
 import {AppBar, Toolbar, Typography, Button} from '@mui/material';
 
 const style = {
