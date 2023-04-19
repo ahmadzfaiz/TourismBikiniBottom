@@ -40,6 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
 
+    # Imported Apps
+    'rest_framework',
+    'rest_framework_gis',
+
     # Created Apps
     'listings',
     'users',
@@ -125,12 +129,21 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# GDAL for Testing in Windows
+# GDAL using OSGeo4W
+# if os.name == 'nt':
+#     OSGEO4W = r'C:\OSGeo4W'
+#     assert os.path.isdir(OSGEO4W), 'Directory does not exist: ' + OSGEO4W
+#     GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal306.dll'
+#     os.environ['PATH'] = OSGEO4W + r'\bin;' + os.environ['PATH']
+
+
+# GDAL using wheel downloads
 if os.name == 'nt':
-    OSGEO4W = r"C:\OSGeo4W"
-    assert os.path.isdir(OSGEO4W), "Directory does not exist: " + OSGEO4W
-    GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal306.dll'
-    os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
+    VENV_BASE = os.environ['VIRTUAL_ENV']
+    os.environ['PATH'] = os.path.join(
+        VENV_BASE, 'Lib\\site-packages\\osgeo') + ';' + os.environ['PATH']
+    os.environ['PROJ_LIB'] = os.path.join(
+        VENV_BASE, 'Lib\\site-packages\\osgeo\\data\\proj') + ';' + os.environ['PATH']
 
 # CUSTOM AUTH USER MODEL
 AUTH_USER_MODEL = 'users.User'

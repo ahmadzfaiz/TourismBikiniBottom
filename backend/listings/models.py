@@ -39,3 +39,6 @@ class Listing(models.Model):
   parking = models.BooleanField(default=False)
   date_posted = models.DateTimeField(auto_now=True)
   location = models.PointField(null=True, blank=True)
+
+  def __str__(self):
+    return self.title
