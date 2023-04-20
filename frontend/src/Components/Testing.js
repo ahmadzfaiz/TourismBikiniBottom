@@ -1,28 +1,47 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useReducer} from 'react';
+import {useImmerReducer} from 'use-immer';
 
 function Testing() {
-  const [count, setCount] = useState(1);
-  //   useEffect(() => {
-  //     console.log('this is our effect');
-  //   }, []);
+  const initialState = {
+    appleCount: 1,
+    bananaCount: 10,
+    message: 'hello',
+    happy: false,
+  };
 
-  useEffect(() => {
-    console.log(`The current count is : ${count}`);
-  }, [count]);
+  function ReducerFunction(draft, action) {
+    switch (action.type) {
+      case 'addApple':
+        draft.appleCount += 1;
+        break;
+      case 'changeEverything':
+        draft.bananaCount += 10;
+        draft.message = action.customMessage;
+        draft.happy = true;
+        break;
+    }
+  }
 
-  function increaseCount() {
-    setCount(current => current + 1);
-  }
-  function decreaseCount() {
-    setCount(current => current - 1);
-  }
+  const [state, dispatch] = useImmerReducer(ReducerFunction, initialState);
 
   return (
     <div>
-      <h1>The current count is : {count}</h1>
+      <div>Now the count of apple is {state.appleCount}</div>
+      <div>Now the count of banana is {state.bananaCount}</div>
+      <div>Message: {state.message}</div>
+      <div>Is happy: {state.happy ? 'yes' : 'no'}</div>
       <br />
-      <button onClick={increaseCount}>Increase</button>
-      <button onClick={decreaseCount}>Decrease</button>
+      <button onClick={() => dispatch({type: 'addApple'})}>Add Apple</button>
+      <button
+        onClick={() =>
+          dispatch({
+            type: 'changeEverything',
+            customMessage: 'this message come from dispatch',
+          })
+        }
+      >
+        CHANGE ALL
+      </button>
     </div>
   );
 }

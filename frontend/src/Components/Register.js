@@ -1,14 +1,10 @@
-import React, {useEffect, useContext} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Axios from 'axios';
 import {useImmerReducer} from 'use-immer';
 
 // MUI Imports
 import {Grid, Typography, Button, TextField} from '@mui/material';
-
-// // Contexts
-import DispatchContext from '../Contexts/DispatchContext';
-import StateContext from '../Contexts/StateContext';
 
 const style = {
   formContainer: {
@@ -30,7 +26,7 @@ const style = {
     marginRight: 'auto',
   },
 
-  loginBtn: {
+  registerBtn: {
     backgroundColor: 'green',
     color: 'white',
     fontSize: '1.1rem',
@@ -43,23 +39,18 @@ const style = {
   accountLink: {
     cursor: 'pointer',
     color: 'green',
-    '&:hover': {
-      color: 'orange',
-    },
   },
 };
 
-function Login() {
+function Register() {
   const navigate = useNavigate();
-
-  const GlobalDispatch = useContext(DispatchContext);
-  const GlobalState = useContext(StateContext);
 
   const initialState = {
     usernameValue: '',
+    emailValue: '',
     passwordValue: '',
+    password2Value: '',
     sendRequest: false,
-    token: '',
   };
 
   function ReducerFunction(draft, action) {
@@ -67,14 +58,17 @@ function Login() {
       case 'catchUsernameChange':
         draft.usernameValue = action.usernameChosen;
         break;
+      case 'catchEmailChange':
+        draft.emailValue = action.emailChosen;
+        break;
       case 'catchPasswordChange':
         draft.passwordValue = action.passwordChosen;
         break;
+      case 'catchPassword2Change':
+        draft.password2Value = action.password2Chosen;
+        break;
       case 'changeSendRequest':
         draft.sendRequest = !draft.sendRequest;
-        break;
-      case 'catchToken':
-        draft.token = action.tokenValue;
         break;
     }
   }
@@ -83,70 +77,33 @@ function Login() {
 
   function FormSubmit(e) {
     e.preventDefault();
-    console.log('submitted');
     dispatch({type: 'changeSendRequest'});
   }
 
-  // Login request
   useEffect(() => {
     if (state.sendRequest) {
       const source = Axios.CancelToken.source();
-      async function SignIn() {
+      async function SignUp() {
         try {
           const response = await Axios.post(
-            'http://localhost:8000/api-auth-djoser/token/login/',
+            'http://localhost:8000/api-auth-djoser/users/',
             {
               username: state.usernameValue,
+              email: state.emailValue,
               password: state.passwordValue,
+              re_password: state.password2Value,
             },
             {
               cancelToken: source.token,
             }
           );
-          dispatch({type: 'catchToken', tokenValue: response.data.auth_token});
-          GlobalDispatch({
-            type: 'catchToken',
-            tokenValue: response.data.auth_token,
-          });
-          // navigate('/');
-        } catch (error) {
-          console.log(error.response);
-        }
-      }
-      SignIn();
-      return () => {
-        source.cancel();
-      };
-    }
-  }, [state.sendRequest]);
-
-  // Get user info request
-  useEffect(() => {
-    if (state.token !== '') {
-      const source = Axios.CancelToken.source();
-      async function GetUserInfo() {
-        try {
-          const response = await Axios.get(
-            'http://localhost:8000/api-auth-djoser/users/me/',
-            {
-              headers: {Authorization: 'Token '.concat(state.token)},
-            },
-            {
-              cancelToken: source.token,
-            }
-          );
-          GlobalDispatch({
-            type: 'userSignIn',
-            usernameInfo: response.data.username,
-            emailInfo: response.data.email,
-            idInfo: response.data.id,
-          });
+          console.log(response);
           navigate('/');
         } catch (error) {
           console.log(error.response);
         }
       }
-      GetUserInfo();
+      SignUp();
       return () => {
         source.cancel();
       };
@@ -157,7 +114,7 @@ function Login() {
     <div style={style.formContainer}>
       <form onSubmit={FormSubmit}>
         <Grid item container justifyContent="center">
-          <Typography variant="h4">SIGN IN</Typography>
+          <Typography variant="h4">CREATE AN ACCOUNT</Typography>
         </Grid>
         <Grid item container sx={style.textInput}>
           <TextField
@@ -170,6 +127,18 @@ function Login() {
                 type: 'catchUsernameChange',
                 usernameChosen: e.target.value,
               })
+            }
+            fullWidth
+          />
+        </Grid>
+        <Grid item container sx={style.textInput}>
+          <TextField
+            id="email"
+            label="Email"
+            variant="outlined"
+            value={state.emailValue}
+            onChange={e =>
+              dispatch({type: 'catchEmailChange', emailChosen: e.target.value})
             }
             fullWidth
           />
@@ -190,24 +159,37 @@ function Login() {
             fullWidth
           />
         </Grid>
+        <Grid item container sx={style.textInput}>
+          <TextField
+            id="password2"
+            label="Confirm Password"
+            variant="outlined"
+            type="password"
+            value={state.password2Value}
+            onChange={e =>
+              dispatch({
+                type: 'catchPassword2Change',
+                password2Chosen: e.target.value,
+              })
+            }
+            fullWidth
+          />
+        </Grid>
         <Grid item container xs={8} sx={style.buttonInput}>
           <Button
             variant="contained"
             type="submit"
             fullWidth
-            sx={style.loginBtn}
+            sx={style.registerBtn}
           >
-            SIGN IN
+            SIGN UP
           </Button>
         </Grid>
         <Grid item container justifyContent="center" sx={style.textInput}>
           <Typography>
-            Don't have an account yet?{' '}
-            <span
-              onClick={() => navigate('/register')}
-              style={style.accountLink}
-            >
-              SIGN UP
+            Already have an account?{' '}
+            <span onClick={() => navigate('/login')} style={style.accountLink}>
+              SIGN IN
             </span>
           </Typography>
         </Grid>
@@ -216,4 +198,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;

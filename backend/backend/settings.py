@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     # Imported Apps
     'rest_framework',
     'rest_framework_gis',
+    'rest_framework.authtoken',
     'corsheaders',
+    'djoser',
 
     # Created Apps
     'listings',
@@ -116,11 +118,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -158,3 +157,16 @@ AUTH_USER_MODEL = 'users.User'
 
 # CORS Enabled
 CORS_ALLOW_ALL_ORIGINS = True
+
+# Rest Framework Authentication
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+
+# DJOSER token authentication
+DJOSER = {
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SEND_ACTIVATION_EMAIL': False,
+}
