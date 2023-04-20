@@ -39,6 +39,11 @@ class Listing(models.Model):
   parking = models.BooleanField(default=False)
   date_posted = models.DateTimeField(auto_now=True)
   location = models.PointField(null=True, blank=True)
+  picture1 = models.ImageField(null=True, blank=True, upload_to='pictures/%Y-%m-%d/')
+  picture2 = models.ImageField(null=True, blank=True, upload_to='pictures/%Y-%m-%d/')
+  picture3 = models.ImageField(null=True, blank=True, upload_to='pictures/%Y-%m-%d/')
+  picture4 = models.ImageField(null=True, blank=True, upload_to='pictures/%Y-%m-%d/')
+  picture5 = models.ImageField(null=True, blank=True, upload_to='pictures/%Y-%m-%d/')
 
   def __str__(self):
     return self.title

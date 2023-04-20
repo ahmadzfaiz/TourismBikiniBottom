@@ -24,6 +24,11 @@ class ListingsForm(forms.ModelForm):
             'location',
             'latitude', # not based on model, for location input
             'longitude', # not based on model, for location input
+            'picture1',
+            'picture2',
+            'picture3',
+            'picture4',
+            'picture5',
         ]
 
     latitude = forms.FloatField()
