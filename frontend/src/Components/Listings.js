@@ -2,15 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Axios from 'axios';
 
 // React-Leaflet Imports
-import {
-  MapContainer,
-  TileLayer,
-  useMap,
-  Marker,
-  Popup,
-  Polyline,
-  Polygon,
-} from 'react-leaflet';
+import {MapContainer, TileLayer, useMap, Marker, Popup} from 'react-leaflet';
 import {Icon} from 'leaflet';
 
 // MUI Imports
@@ -119,12 +111,6 @@ function Listings() {
     );
   }
 
-  const polyOne = [
-    [51.505, -0.09],
-    [51.51, -0.1],
-    [51.51, -0.12],
-  ];
-
   return (
     <Grid container>
       <Grid item xs={4}>
@@ -191,14 +177,6 @@ function Listings() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
 
-              <Polyline positions={polyOne} weight={10} color="blue" />
-              <Polygon
-                positions={polygonOne}
-                color="green"
-                fillColor="red"
-                fillOpacity={0.9}
-              ></Polygon>
-
               {allListings.map(listing => {
                 function IconDisplay() {
                   if (listing.listing_type === 'House') {
@@ -213,8 +191,8 @@ function Listings() {
                   <Marker
                     key={listing.id}
                     position={[
-                      listing.location.coordinates[0],
                       listing.location.coordinates[1],
+                      listing.location.coordinates[0],
                     ]}
                     icon={IconDisplay()}
                   >

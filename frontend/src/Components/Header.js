@@ -109,7 +109,12 @@ function Header() {
           </Button>
         </div>
         <div style={{marginLeft: 'auto', marginRight: '10rem'}}>
-          <Button sx={style.propertyBtn}>Add Property</Button>
+          <Button
+            onClick={() => navigate('/add-property')}
+            sx={style.propertyBtn}
+          >
+            Add Property
+          </Button>
           {GlobalState.userIsLogged ? (
             <Button onClick={handleClick} sx={style.loginBtn}>
               {GlobalState.userUsername}

@@ -1,6 +1,9 @@
 from django.contrib.gis.db import models
+from django.contrib.auth import get_user_model
 
 class Listing(models.Model):
+  User = get_user_model()
+  
   choices_area = [
     ('Inner London', 'Inner London'),
     ('Outer London', 'Outer London'),
@@ -24,6 +27,7 @@ class Listing(models.Model):
   ]
 
   title = models.CharField(max_length=150)
+  seller = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
   description =  models.TextField(null=True, blank=True)
   area = models.CharField(max_length=20, null=True, blank=True, choices=choices_area)
   borough = models.CharField(max_length=50, null=True, blank=True)
@@ -38,7 +42,7 @@ class Listing(models.Model):
   cctv = models.BooleanField(default=False)
   parking = models.BooleanField(default=False)
   date_posted = models.DateTimeField(auto_now=True)
-  location = models.PointField(null=True, blank=True)
+  location = models.PointField(null=True, blank=True, srid=4326)
   picture1 = models.ImageField(null=True, blank=True, upload_to='pictures/%Y-%m-%d/')
   picture2 = models.ImageField(null=True, blank=True, upload_to='pictures/%Y-%m-%d/')
   picture3 = models.ImageField(null=True, blank=True, upload_to='pictures/%Y-%m-%d/')

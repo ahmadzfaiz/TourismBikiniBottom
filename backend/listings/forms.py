@@ -8,6 +8,7 @@ class ListingsForm(forms.ModelForm):
         model = Listing
         fields = [
             'title',
+            'seller',
             'description',
             'area',
             'borough',
@@ -38,7 +39,7 @@ class ListingsForm(forms.ModelForm):
         data = super().clean()
         latitude = data.pop('latitude')
         longitude = data.pop('longitude')
-        data['location'] = Point(latitude, longitude, srid=4326)
+        data['location'] = Point(longitude, latitude, srid=4326)
         return data
 
     def __init__(self, *args, **kwargs):
