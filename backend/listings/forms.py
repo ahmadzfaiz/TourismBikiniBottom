@@ -46,5 +46,5 @@ class ListingsForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         location = self.initial.get('location')
         if isinstance(location, Point):
-            self.initial['latitude'] = location.tuple[0]
-            self.initial['longitude'] = location.tuple[1]
+            self.initial['longitude'] = location.tuple[0]
+            self.initial['latitude'] = location.tuple[1]

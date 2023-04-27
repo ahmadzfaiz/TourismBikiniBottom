@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Axios from 'axios';
+import {useImmerReducer} from 'use-immer';
 
 // React-Leaflet Imports
 import {MapContainer, TileLayer, useMap, Marker, Popup} from 'react-leaflet';
@@ -12,11 +13,15 @@ import {
   Typography,
   Button,
   Card,
+  CardActions,
   CardHeader,
   CardMedia,
   CardContent,
   CircularProgress,
+  IconButton
 } from '@mui/material';
+
+import RoomIcon from '@mui/icons-material/Room';
 
 // Assets
 import houseIcon from './Assets/map-icon/bighouse.png';
@@ -71,6 +76,26 @@ function Listings() {
   //   .then(response => response.json())
   //   .then(data => console.log(data));
 
+  const initialState = {
+    mapInstance: null,
+  };
+
+  function ReducerFunction(draft, action) {
+    switch (action.type) {
+      case 'getMap':
+        draft.mapInstance = action.mapData;
+        break;
+    }
+  }
+
+  const [state, dispatch] = useImmerReducer(ReducerFunction, initialState);
+
+  function TheMapComponent() {
+    const map = useMap();
+    dispatch({type: 'getMap', mapData: map});
+    return null;
+  }
+
   const [allListings, setAllListings] = useState([]);
   const [dataIsLoading, setDataIsLoading] = useState(true);
 
@@ -118,11 +143,11 @@ function Listings() {
           return (
             <Card key={listing.id} sx={style.cardStyle}>
               <CardHeader
-                // action={
-                //   <IconButton aria-label="settings">
-                //     <MoreVertIcon />
-                //   </IconButton>
-                // }
+                action={
+                  <IconButton aria-label="settings" onClick={()=>state.mapInstance.flyTo([listing.location.coordinates[1], listing.location.coordinates[0]], 16)}>
+                    <RoomIcon />
+                  </IconButton>
+                }
                 title={listing.title}
               />
               <CardMedia
@@ -152,14 +177,11 @@ function Listings() {
                   / {listing.rental_frequency}
                 </Typography>
               )}
-              {/* <CardActions disableSpacing>
+              <CardActions disableSpacing>
                 <IconButton aria-label="add to favorites">
-                  <FavoriteIcon />
+                  {listing.seller_username}
                 </IconButton>
-                <IconButton aria-label="share">
-                  <ShareIcon />
-                </IconButton>
-              </CardActions> */}
+              </CardActions>
             </Card>
           );
         })}
@@ -176,6 +198,8 @@ function Listings() {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
+
+              <TheMapComponent />
 
               {allListings.map(listing => {
                 function IconDisplay() {

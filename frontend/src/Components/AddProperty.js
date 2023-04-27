@@ -478,6 +478,7 @@ function AddProperty() {
             formData
           );
           console.log(response);
+          navigate('/listings');
         } catch (error) {
           console.log(error.response);
         }
