@@ -351,6 +351,10 @@ function AddProperty() {
     },
     uploadedPictures: [],
     sendRequest: false,
+    userProfile: {
+      agencyName: '',
+      phoneNumber: '',
+    }
   };
 
   function ReducerFunction(draft, action) {
@@ -433,10 +437,28 @@ function AddProperty() {
       case 'changeSendRequest':
         draft.sendRequest = !draft.sendRequest;
         break;
+      case 'catchUserProfileInfo':
+        draft.userProfile.agencyName = action.value.agency_name;
+        draft.userProfile.phoneNumber = action.value.phone_number;
+        break;
     }
   }
 
   const [state, dispatch] = useImmerReducer(ReducerFunction, initialState);
+
+  // Request to get grofile info
+  useEffect(()=>{
+    async function GetProfileInfo(){
+      try{
+        const response = await Axios.get(`http://localhost:8000/api/profiles/${GlobalState.userId}/`)
+        console.log(response.data)
+        dispatch({type: 'catchUserProfileInfo', value: response.data})
+      } catch(error){
+        console.log(error.response)
+      }
+    }
+    GetProfileInfo()
+  }, [])
 
   function FormSubmit(e) {
     e.preventDefault();
@@ -960,6 +982,22 @@ function AddProperty() {
     }
   }
 
+  function SubmitButtonDisplay(){
+    if(GlobalState.userIsLogged && state.userProfile.agencyName !== null && state.userProfile.agencyName !== '' && state.userProfile.phoneNumber !== null && state.userProfile.phoneNumber !== ''){
+      return (
+        <Button variant="contained" type="submit" fullWidth sx={style.registerBtn}>SUBMIT</Button>
+      )
+    } else if(GlobalState.userIsLogged && (state.userProfile.agencyName === null || state.userProfile.agencyName === '' || state.userProfile.phoneNumber === null || state.userProfile.phoneNumber === '')){
+      return (
+        <Button variant="outlined" onClick={()=> navigate('/profile')} fullWidth sx={style.registerBtn}>COMPLETE YOUR PROFILE TO ADD PROPERTY</Button>
+      )
+    } else if(!GlobalState.userIsLogged){
+      return (
+        <Button variant="outlined" onClick={()=> navigate('/login')} fullWidth sx={style.registerBtn}>SIGN IN TO ADD A PROPERTY</Button>
+      )
+    }
+  }
+
   return (
     <div style={style.formContainer}>
       <form onSubmit={FormSubmit}>
@@ -1180,14 +1218,7 @@ function AddProperty() {
         </Grid>
 
         <Grid item container xs={8} sx={style.buttonInput}>
-          <Button
-            variant="contained"
-            type="submit"
-            fullWidth
-            sx={style.registerBtn}
-          >
-            SUBMIT
-          </Button>
+          {SubmitButtonDisplay()}
         </Grid>
       </form>
     </div>
